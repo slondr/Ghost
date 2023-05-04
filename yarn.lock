@@ -2873,10 +2873,10 @@
   resolved "https://registry.yarnpkg.com/@isaacs/string-locale-compare/-/string-locale-compare-1.1.0.tgz#291c227e93fd407a96ecd59879a35809120e432b"
   integrity sha512-SQ7Kzhh9+D+ZW9MA0zkYv3VXhIDNx+LzM6EJ+/65I3QY+enU6Itte7E5XX7EWrqLW2FN4n06GWzBnPoC3th2aQ==
 
-"@isaacs/ttlcache@1.2.2":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@isaacs/ttlcache/-/ttlcache-1.2.2.tgz#2c3bc9cbfdbf999046c58a22fd17c0b8e4ffba19"
-  integrity sha512-UvS9r/yugpqc/uLRdmxfFkaPGfjvVQPjHn3cGFWiT5K1H8o0t3MsRUAB5xs//4dNEmSSi6WpMqVpMjKbsVv82g==
+"@isaacs/ttlcache@1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@isaacs/ttlcache/-/ttlcache-1.3.0.tgz#1074f90ebd21b33e3b940563683b0b1f022000ba"
+  integrity sha512-uiRGoGVITOeIzbcqU9XVZGCa2T7AavPI7a7jtuSj7VdegVTlGbmvCeMc2bTRFXWzThq+rnSielfGxcggWu/3Cg==
 
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.1.0"
