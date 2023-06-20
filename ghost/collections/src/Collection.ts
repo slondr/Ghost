@@ -192,7 +192,7 @@ export class Collection {
         return new Collection({
             id: id.toHexString(),
             title: data.title,
-            slug: data.slug,
+            slug: data.slug || data.title.toLowerCase().replace(/\s/g, '-').trim(),
             description: data.description || null,
             type: data.type || 'manual',
             filter: data.filter || null,
