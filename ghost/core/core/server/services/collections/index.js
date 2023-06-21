@@ -1,7 +1,7 @@
 const {
-    CollectionsService,
-    CollectionsRepositoryInMemory
+    CollectionsService
 } = require('@tryghost/collections');
+const BookshelfCollectionsRepository = require('./BookshelfCollectionsRepository');
 const labs = require('../../../shared/labs');
 
 class CollectionsServiceWrapper {
@@ -9,9 +9,10 @@ class CollectionsServiceWrapper {
     api;
 
     constructor() {
-        const postsRepository = require('./PostsRepository').getInstance();
-        const collectionsRepositoryInMemory = new CollectionsRepositoryInMemory();
         const DomainEvents = require('@tryghost/domain-events');
+        const postsRepository = require('./PostsRepository').getInstance();
+        const models = require('../../models');
+        const collectionsRepositoryInMemory = new BookshelfCollectionsRepository(models.Collection);
 
         const collectionsService = new CollectionsService({
             collectionsRepository: collectionsRepositoryInMemory,
