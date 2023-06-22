@@ -24,10 +24,10 @@
     "sinon": "15.0.3"
   },
   "dependencies": {
-    "@tryghost/debug": "0.1.24",
-    "@tryghost/errors": "1.2.24",
-    "@tryghost/http-cache-utils": "0.1.9",
-    "@tryghost/tpl": "0.1.24",
+    "@tryghost/debug": "0.1.25",
+    "@tryghost/errors": "1.2.25",
+    "@tryghost/http-cache-utils": "0.1.10",
+    "@tryghost/tpl": "0.1.25",
     "lodash": "4.17.21",
     "semver": "7.5.2"
   }
