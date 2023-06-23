@@ -1,3 +1,4 @@
+import {UniqueChecker} from './UniqueChecker';
 import {ValidationError} from '@tryghost/errors';
 import tpl from '@tryghost/tpl';
 import nql = require('@tryghost/nql');
@@ -10,7 +11,9 @@ const messages = {
     invalidFilterProvided: {
         message: 'Invalid filter provided for automatic Collection',
         context: 'Automatic type of collection should always have a filter value'
-    }
+    },
+    slugMustBeUnique: 'Slug must be unique',
+    noTitleProvided: 'Title must be provided'
 };
 
 type CollectionPost = {
@@ -22,7 +25,23 @@ type CollectionPost = {
 export class Collection {
     id: string;
     title: string;
-    slug: string;
+    private _slug: string;
+    get slug() {
+        return this._slug;
+    }
+
+    async setSlug(slug: string, uniqueChecker: UniqueChecker) {
+        if (slug === this.slug) {
+            return;
+        }
+        if (await uniqueChecker.isUniqueSlug(slug)) {
+            this._slug = slug;
+        } else {
+            throw new ValidationError({
+                message: tpl(messages.slugMustBeUnique)
+            });
+        }
+    }
     description: string;
     type: 'manual' | 'automatic';
     filter: string | null;
@@ -30,9 +49,9 @@ export class Collection {
     createdAt: Date;
     updatedAt: Date;
     deletable: boolean;
-    _deleted: boolean = false;
+    private _deleted: boolean = false;
 
-    _posts: string[];
+    private _posts: string[];
     get posts() {
         return this._posts;
     }
@@ -125,7 +144,7 @@ export class Collection {
     private constructor(data: any) {
         this.id = data.id;
         this.title = data.title;
-        this.slug = data.slug;
+        this._slug = data.slug;
         this.description = data.description;
         this.type = data.type;
         this.filter = data.filter;
@@ -166,7 +185,7 @@ export class Collection {
         });
     }
 
-    static async create(data: any): Promise<Collection> {
+    static async create(data: any, uniqueChecker: UniqueChecker): Promise<Collection> {
         let id;
 
         if (!data.id) {
@@ -189,10 +208,15 @@ export class Collection {
             });
         }
 
-        return new Collection({
+        if (!data.title) {
+            throw new ValidationError({
+                message: tpl(messages.noTitleProvided)
+            });
+        }
+
+        const collection = new Collection({
             id: id.toHexString(),
             title: data.title,
-            slug: data.slug || data.title.toLowerCase().replace(/\s/g, '-').trim(),
             description: data.description || null,
             type: data.type || 'manual',
             filter: data.filter || null,
@@ -203,5 +227,9 @@ export class Collection {
             deletable: (data.deletable !== false),
             posts: data.posts || []
         });
+
+        collection.setSlug(data.slug || data.title.toLowerCase().replace(/\s/, '-').trim(), uniqueChecker);
+
+        return collection;
     }
 }

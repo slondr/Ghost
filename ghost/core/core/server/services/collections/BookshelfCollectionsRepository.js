@@ -60,6 +60,10 @@ module.exports = class BookshelfCollectionsRepository {
             posts: json.posts.map(post => post.id),
             createdAt: json.created_at,
             updatedAt: json.updated_at
+        }, {
+            async isUniqueSlug() {
+                return true;
+            }
         });
     }
 

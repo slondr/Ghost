@@ -7,6 +7,7 @@ import {MethodNotAllowedError, NotFoundError} from '@tryghost/errors';
 import {PostDeletedEvent} from './events/PostDeletedEvent';
 import {PostAddedEvent} from './events/PostAddedEvent';
 import {PostEditedEvent} from './events/PostEditedEvent';
+import {RepositoryUniqueChecker} from './RepositoryUniqueChecker';
 
 const messages = {
     cannotDeleteBuiltInCollectionError: {
@@ -94,11 +95,13 @@ export class CollectionsService {
     private DomainEvents: {
         subscribe: (event: any, handler: (e: any) => void) => void;
     };
+    private uniqueChecker: RepositoryUniqueChecker;
 
     constructor(deps: CollectionsServiceDeps) {
         this.collectionsRepository = deps.collectionsRepository;
         this.postsRepository = deps.postsRepository;
         this.DomainEvents = deps.DomainEvents;
+        this.uniqueChecker = new RepositoryUniqueChecker(this.collectionsRepository);
     }
 
     private toDTO(collection: Collection): CollectionDTO {
@@ -122,7 +125,6 @@ export class CollectionsService {
     private fromDTO(data: any): any {
         const mappedDTO: {[index: string]:any} = {
             title: data.title,
-            slug: data.slug,
             description: data.description,
             featureImage: data.feature_image,
             filter: data.filter
@@ -170,7 +172,7 @@ export class CollectionsService {
             filter: data.filter,
             featureImage: data.feature_image,
             deletable: data.deletable
-        });
+        }, this.uniqueChecker);
 
         if (collection.type === 'automatic' && collection.filter) {
             const posts = await this.postsRepository.getAll({
@@ -298,7 +300,11 @@ export class CollectionsService {
             }
         }
 
-        if (collection.type === 'automatic' && data.filter) {
+        if (data.slug) {
+            await collection.setSlug(data.slug, this.uniqueChecker);
+        }
+
+        if ((collection.type === 'automatic' || data.type === 'automatic') && data.filter) {
             await this.updateAutomaticCollectionItems(collection, data.filter);
         }
 
