@@ -13,6 +13,7 @@ const messages = {
         context: 'Automatic type of collection should always have a filter value'
     },
     slugMustBeUnique: 'Slug must be unique',
+    slugMustExist: 'Slug must exist',
     noTitleProvided: 'Title must be provided'
 };
 
@@ -31,6 +32,11 @@ export class Collection {
     }
 
     async setSlug(slug: string, uniqueChecker: UniqueChecker) {
+        if (!slug) {
+            throw new ValidationError({
+                message: tpl(messages.slugMustExist)
+            });
+        }
         if (slug === this.slug) {
             return;
         }
@@ -48,7 +54,9 @@ export class Collection {
     featureImage: string | null;
     createdAt: Date;
     updatedAt: Date;
-    deletable: boolean;
+    get deletable() {
+        return this.slug !== 'index' && this.slug !== 'featured';
+    }
     private _deleted: boolean = false;
 
     private _posts: string[];
@@ -151,7 +159,6 @@ export class Collection {
         this.featureImage = data.featureImage;
         this.createdAt = data.createdAt;
         this.updatedAt = data.updatedAt;
-        this.deletable = data.deletable;
         this.deleted = data.deleted;
         this._posts = data.posts;
     }
@@ -217,6 +224,7 @@ export class Collection {
         const collection = new Collection({
             id: id.toHexString(),
             title: data.title,
+            slug: data.slug,
             description: data.description || null,
             type: data.type || 'manual',
             filter: data.filter || null,
@@ -224,11 +232,8 @@ export class Collection {
             createdAt: Collection.validateDateField(data.created_at, 'created_at'),
             updatedAt: Collection.validateDateField(data.updated_at, 'updated_at'),
             deleted: data.deleted || false,
-            deletable: (data.deletable !== false),
             posts: data.posts || []
         });
-
-        collection.setSlug(data.slug || data.title.toLowerCase().replace(/\s/, '-').trim(), uniqueChecker);
 
         return collection;
     }

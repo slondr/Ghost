@@ -72,6 +72,10 @@ module.exports = class BookshelfCollectionsRepository {
      * @returns {Promise<void>}
      */
     async save(collection) {
+        if (collection.deleted) {
+            await this.#model.destroy({id: collection.id});
+            return;
+        }
         const data = {
             id: collection.id,
             slug: collection.slug,

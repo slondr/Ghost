@@ -17,7 +17,12 @@ class CollectionsServiceWrapper {
         const collectionsService = new CollectionsService({
             collectionsRepository: collectionsRepositoryInMemory,
             postsRepository: postsRepository,
-            DomainEvents: DomainEvents
+            DomainEvents: DomainEvents,
+            slugService: {
+                async generate(input) {
+                    return models.Collection.generateSlug(models.Collection, input, {});
+                }
+            }
         });
 
         this.api = collectionsService;
