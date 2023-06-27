@@ -66,7 +66,7 @@ export class Collection {
         }
     }
 
-    public edit(data: Partial<Collection>) {
+    public async edit(data: Partial<Collection>, uniqueChecker: UniqueChecker) {
         if (this.type === 'automatic' && (data.filter === null || data.filter === '')) {
             throw new ValidationError({
                 message: tpl(messages.invalidFilterProvided.message),
@@ -79,7 +79,7 @@ export class Collection {
         }
 
         if (data.slug !== undefined) {
-            this.slug = data.slug;
+            await this.setSlug(data.slug, uniqueChecker);
         }
 
         if (data.description !== undefined) {

@@ -292,16 +292,12 @@ export class CollectionsService {
         }
 
         const collectionData = this.fromDTO(data);
-        await collection.edit(collectionData);
+        await collection.edit(collectionData, this.uniqueChecker);
 
         if (collection.type === 'manual' && data.posts) {
             for (const post of data.posts) {
                 collection.addPost(post);
             }
-        }
-
-        if (data.slug) {
-            await collection.setSlug(data.slug, this.uniqueChecker);
         }
 
         if ((collection.type === 'automatic' || data.type === 'automatic') && data.filter) {

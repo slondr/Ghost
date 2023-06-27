@@ -24,6 +24,12 @@ describe('Collection', function () {
         assert.ok((collection.deleted === false), 'deleted should be false');
     });
 
+    it('Cannot create a collection without a title', async function () {
+        assert.rejects(async () => {
+            await Collection.create({}, uniqueChecker);
+        });
+    });
+
     it('Can serialize Collection to JSON', async function () {
         const collection = await Collection.create({
             title: 'Serialize me',
@@ -132,6 +138,40 @@ describe('Collection', function () {
         });
     });
 
+    describe('setSlug', function () {
+        it('Does not bother checking uniqueness if slug is unchanged', async function () {
+            const collection = await Collection.create({
+                slug: 'test-collection',
+                title: 'Testing edits',
+                type: 'automatic',
+                filter: 'featured:true'
+            }, uniqueChecker);
+
+            await collection.setSlug('test-collection', {
+                isUniqueSlug: () => {
+                    throw new Error('Should not have checked uniqueness');
+                }
+            });
+        });
+
+        it('Throws an error if slug is not unique', async function () {
+            const collection = await Collection.create({
+                slug: 'test-collection',
+                title: 'Testing edits',
+                type: 'automatic',
+                filter: 'featured:true'
+            }, uniqueChecker);
+
+            assert.rejects(async () => {
+                await collection.setSlug('not-unique', {
+                    async isUniqueSlug() {
+                        return false;
+                    }
+                });
+            });
+        });
+    });
+
     describe('edit', function () {
         it('Can edit Collection values', async function () {
             const collection = await Collection.create({
@@ -143,10 +183,10 @@ describe('Collection', function () {
 
             assert.equal(collection.title, 'Testing edits');
 
-            collection.edit({
+            await collection.edit({
                 title: 'Edited title',
                 slug: 'edited-slug'
-            });
+            }, uniqueChecker);
 
             assert.equal(collection.title, 'Edited title');
             assert.equal(collection.slug, 'edited-slug');
@@ -162,7 +202,7 @@ describe('Collection', function () {
             assert.rejects(async () => {
                 await collection.edit({
                     filter: null
-                });
+                }, uniqueChecker);
             }, (err: any) => {
                 assert.equal(err.message, 'Invalid filter provided for automatic Collection', 'Error message should match');
                 assert.equal(err.context, 'Automatic type of collection should always have a filter value', 'Error message should match');
