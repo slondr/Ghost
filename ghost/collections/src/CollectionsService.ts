@@ -180,7 +180,7 @@ export class CollectionsService {
             filter: data.filter,
             featureImage: data.feature_image,
             deletable: data.deletable
-        }, this.uniqueChecker);
+        });
 
         if (collection.type === 'automatic' && collection.filter) {
             const posts = await this.postsRepository.getAll({
