@@ -204,7 +204,8 @@ describe('CollectionsService', function () {
                 id: savedCollection.id,
                 title: 'Edited title',
                 description: 'Edited description',
-                feature_image: '/assets/images/edited.jpg'
+                feature_image: '/assets/images/edited.jpg',
+                slug: 'changed'
             });
 
             assert.equal(editedCollection?.title, 'Edited title', 'Collection title should be edited');

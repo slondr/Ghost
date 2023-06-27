@@ -32,11 +32,6 @@ export class Collection {
     }
 
     async setSlug(slug: string, uniqueChecker: UniqueChecker) {
-        if (!slug) {
-            throw new ValidationError({
-                message: tpl(messages.slugMustExist)
-            });
-        }
         if (slug === this.slug) {
             return;
         }
