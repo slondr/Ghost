@@ -29,7 +29,7 @@ class CollectionsServiceWrapper {
     }
 
     async init() {
-        if (!labs.isSet('collections')) {
+        if (!labs.isSet('collections') && process.env.NODE_ENV !== 'testing') {
             return;
         }
 

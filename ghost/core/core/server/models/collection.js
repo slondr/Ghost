@@ -32,7 +32,26 @@ const Collection = ghostBookshelf.Model.extend({
         posts: 'posts'
     },
 
-    permittedAttributes: function permittedAttributes() {
+    filterExpansions() {
+        return [{
+            key: 'posts',
+            replacement: 'posts.id'
+        }];
+    },
+
+    filterRelations() {
+        return {
+            posts: {
+                tableName: 'posts',
+                type: 'manyToMany',
+                joinTable: 'collections_posts',
+                joinFrom: 'collection_id',
+                joinTo: 'post_id'
+            }
+        };
+    },
+
+    permittedAttributes() {
         let filteredKeys = ghostBookshelf.Model.prototype.permittedAttributes.apply(this, arguments);
 
         this.relationships.forEach((key) => {
