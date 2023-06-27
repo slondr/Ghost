@@ -12,7 +12,7 @@ describe('Collection', function () {
     it('Create Collection entity', async function () {
         const collection = await Collection.create({
             title: 'Test Collection'
-        }, uniqueChecker);
+        });
 
         assert.ok(collection instanceof Collection);
         assert.ok(collection.id, 'generated id should be set');
@@ -26,7 +26,7 @@ describe('Collection', function () {
 
     it('Cannot create a collection without a title', async function () {
         assert.rejects(async () => {
-            await Collection.create({}, uniqueChecker);
+            await Collection.create({});
         });
     });
 
@@ -38,7 +38,7 @@ describe('Collection', function () {
             }, {
                 id: 'post-2'
             }]
-        }, uniqueChecker);
+        });
 
         const json = collection.toJSON();
 
@@ -74,7 +74,7 @@ describe('Collection', function () {
         const savedCollection = await Collection.create({
             id: id.toHexString(),
             title: 'Blah'
-        }, uniqueChecker);
+        });
 
         assert.equal(savedCollection.id, id.toHexString(), 'Collection should have same id');
     });
@@ -84,7 +84,7 @@ describe('Collection', function () {
         const savedCollection = await Collection.create({
             id: id,
             title: 'Bleh'
-        }, uniqueChecker);
+        });
 
         assert.equal(savedCollection.id, id.toHexString(), 'Collection should have same id');
     });
@@ -96,7 +96,7 @@ describe('Collection', function () {
             created_at: createdAt,
             updated_at: updatedAt,
             title: 'Bluh'
-        }, uniqueChecker);
+        });
 
         assert.equal(savedCollection.createdAt, createdAt, 'Collection should have same created_at');
         assert.equal(savedCollection.updatedAt, updatedAt, 'Collection should have same updated_at');
@@ -106,7 +106,7 @@ describe('Collection', function () {
         await assert.rejects(async () => {
             await Collection.create({
                 id: 12345
-            }, uniqueChecker);
+            });
         }, (err: any) => {
             assert.equal(err.message, 'Invalid ID provided for Collection', 'Error message should match');
             return true;
@@ -118,7 +118,7 @@ describe('Collection', function () {
             await Collection.create({
                 created_at: 'invalid date',
                 title: 'Blih'
-            }, uniqueChecker);
+            });
         }, (err: any) => {
             assert.equal(err.message, 'Invalid date provided for created_at', 'Error message should match');
             return true;
@@ -130,7 +130,7 @@ describe('Collection', function () {
             await Collection.create({
                 type: 'automatic',
                 filter: null
-            }, uniqueChecker);
+            });
         }, (err: any) => {
             assert.equal(err.message, 'Invalid filter provided for automatic Collection', 'Error message should match');
             assert.equal(err.context, 'Automatic type of collection should always have a filter value', 'Error message should match');
@@ -145,7 +145,7 @@ describe('Collection', function () {
                 title: 'Testing edits',
                 type: 'automatic',
                 filter: 'featured:true'
-            }, uniqueChecker);
+            });
 
             await collection.setSlug('test-collection', {
                 isUniqueSlug: () => {
@@ -160,7 +160,7 @@ describe('Collection', function () {
                 title: 'Testing edits',
                 type: 'automatic',
                 filter: 'featured:true'
-            }, uniqueChecker);
+            });
 
             assert.rejects(async () => {
                 await collection.setSlug('not-unique', {
@@ -179,7 +179,7 @@ describe('Collection', function () {
                 title: 'Testing edits',
                 type: 'automatic',
                 filter: 'featured:true'
-            }, uniqueChecker);
+            });
 
             assert.equal(collection.title, 'Testing edits');
 
@@ -197,7 +197,7 @@ describe('Collection', function () {
                 title: 'Testing edits',
                 type: 'automatic',
                 filter: 'featured:true'
-            }, uniqueChecker);
+            });
 
             assert.rejects(async () => {
                 await collection.edit({
@@ -215,7 +215,7 @@ describe('Collection', function () {
         const collection = await Collection.create({
             title: 'Testing adding posts',
             type: 'manual'
-        }, uniqueChecker);
+        });
 
         assert(collection.posts.length === 0);
 
@@ -247,7 +247,7 @@ describe('Collection', function () {
             title: 'Testing adding posts',
             type: 'automatic',
             filter: 'featured:true'
-        }, uniqueChecker);
+        });
 
         assert.equal(collection.posts.length, 0, 'Collection should have no posts');
 
@@ -271,7 +271,7 @@ describe('Collection', function () {
     it('Removes a post by id', async function () {
         const collection = await Collection.create({
             title: 'Testing adding posts'
-        }, uniqueChecker);
+        });
 
         assert.equal(collection.posts.length, 0);
 
@@ -290,7 +290,7 @@ describe('Collection', function () {
         const collection = await Collection.create({
             title: 'Testing adding posts',
             deletable: false
-        }, uniqueChecker);
+        });
 
         assert.equal(collection.deleted, false);
 
@@ -303,7 +303,7 @@ describe('Collection', function () {
         const collection = await Collection.create({
             title: 'Testing adding posts',
             deletable: true
-        }, uniqueChecker);
+        });
 
         assert.equal(collection.deleted, false);
 
@@ -318,7 +318,7 @@ describe('Collection', function () {
                 title: 'Testing filtering posts',
                 type: 'automatic',
                 filter: 'featured:true'
-            }, uniqueChecker);
+            });
 
             const featuredPost = {
                 id: '0',
