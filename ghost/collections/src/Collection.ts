@@ -192,7 +192,7 @@ export class Collection {
         });
     }
 
-    static async create(data: any, uniqueChecker: UniqueChecker): Promise<Collection> {
+    static async create(data: any): Promise<Collection> {
         let id;
 
         if (!data.id) {

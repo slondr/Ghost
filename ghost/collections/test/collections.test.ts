@@ -41,7 +41,12 @@ describe('CollectionsService', function () {
         collectionsService = new CollectionsService({
             collectionsRepository,
             postsRepository,
-            DomainEvents
+            DomainEvents,
+            slugService: {
+                async generate(input) {
+                    return input.replace(/\s+/g, '-').toLowerCase();
+                }
+            }
         });
     });
 
